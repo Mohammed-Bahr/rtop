@@ -2,8 +2,13 @@
 name = "rtop"
 version = "0.1.0"
 edition = "2024"
+
 description = "A modern Linux terminal system monitor written in Rust"
 license = "MIT"
+
+repository = "https://github.com/Mohammed-Bahr/rtop"
+homepage = "https://github.com/Mohammed-Bahr/rtop"
+readme = "README.md"
 
 [dependencies]
 ratatui = "0.24"
