@@ -8,13 +8,26 @@ pub enum Signal {
 }
 
 impl Signal {
-    /// Raw Linux signal number.
+    /// Raw POSIX signal number on Unix; a stable placeholder on Windows.
     pub fn as_raw(self) -> i32 {
-        match self {
-            Signal::Term => libc::SIGTERM,
-            Signal::Kill => libc::SIGKILL,
-            Signal::Stop => libc::SIGSTOP,
-            Signal::Cont => libc::SIGCONT,
+        #[cfg(unix)]
+        {
+            match self {
+                Signal::Term => libc::SIGTERM,
+                Signal::Kill => libc::SIGKILL,
+                Signal::Stop => libc::SIGSTOP,
+                Signal::Cont => libc::SIGCONT,
+            }
+        }
+
+        #[cfg(not(unix))]
+        {
+            match self {
+                Signal::Term => 15,
+                Signal::Kill => 9,
+                Signal::Stop => 19,
+                Signal::Cont => 18,
+            }
         }
     }
 

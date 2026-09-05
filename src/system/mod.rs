@@ -313,6 +313,7 @@ impl SystemMonitor {
     /// Read `/proc/diskstats`, diff against the previous sample and derive
     /// aggregate read/write throughput. Returns `None` on the very first
     /// call or when `/proc/diskstats` is unavailable.
+    #[cfg(target_os = "linux")]
     fn sample_disk_io(&mut self) -> Option<DiskIo> {
         let content = std::fs::read_to_string("/proc/diskstats").ok()?;
         let now = Instant::now();
@@ -337,6 +338,11 @@ impl SystemMonitor {
         })
     }
 
+    #[cfg(not(target_os = "linux"))]
+    fn sample_disk_io(&mut self) -> Option<DiskIo> {
+        None
+    }
+
     /// Send a POSIX signal to a PID. Isolated here so the rest of the app
     /// stays platform-neutral; returns a human-readable error on failure.
     #[cfg(target_os = "linux")]
@@ -354,6 +360,11 @@ impl SystemMonitor {
             };
             Err(msg.to_string())
         }
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    pub fn send_signal(_pid: u32, _sig: i32) -> Result<(), String> {
+        Err("process signals are only supported on Linux".to_string())
     }
 
 }
