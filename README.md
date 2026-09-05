@@ -70,6 +70,33 @@ To remove an installation made by the script:
 curl -fsSL https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/uninstall.sh | sh
 ```
 
+### Windows PowerShell
+
+In PowerShell, install the latest Windows x86_64 release into
+`$HOME\.local\bin` with:
+
+```powershell
+irm https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/install.ps1 | iex
+```
+
+The script verifies the downloaded ZIP with SHA256 and adds the install
+directory to your user `PATH`. Open a new PowerShell window after installation,
+then run:
+
+```powershell
+rtop
+```
+
+Remove the PowerShell installation with:
+
+```powershell
+irm https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/uninstall.ps1 | iex
+```
+
+To use another installation directory, set `RTOP_INSTALL_DIR` before running
+either script. A Windows release containing `rtop-windows-x86_64.zip` must be
+published for the PowerShell installer to work.
+
 ### Build From Source
 
 Clone the repository, then install the optimized binary with Cargo:
