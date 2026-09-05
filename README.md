@@ -8,18 +8,7 @@ clean, modular architecture with [ratatui], [crossterm] and [sysinfo].
 [crossterm]: https://github.com/crossterm-rs/crossterm
 [sysinfo]: https://github.com/GuillaumeGomez/sysinfo
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ myhost Fedora Linux 42 (6.x.x)                              ● LIVE   │
-│ CPU  14.0%  RAM 60.9%  Load 0.42 0.38 0.35  Up 03:12:44              │
-├──────────────────────────────────────────────────────────────────────┤
-│ PID      Name                    CPU% ▼    Mem        User    State  │
-│> 37959   opencode                64.3      891.0 MB   me      Sleeping│
-│  7044    obsidian                15.0      680.6 MB   me      Sleeping│
-│  1       systemd                  0.0       22.5 MB   root    Sleeping│
-└──────────────────────────────────────────────────────────────────────┘
- Processes  CPU  Memory  Disk  Network  Tree
-```
+![[Attachments/1.png]]
 
 ## Features
 
