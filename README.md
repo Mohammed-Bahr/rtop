@@ -99,6 +99,25 @@ x86_64, macOS arm64, and Windows x86_64. The application is Linux-first:
 Linux provides disk I/O metrics and process signals; those features are
 unavailable on macOS and Windows.
 
+### Test Installation in Docker
+
+After publishing a GitHub Release, test the public installer in a clean Linux
+container:
+
+```bash
+docker build -f Dockerfile.install-test -t rtop-install-test .
+docker run --rm rtop-install-test
+```
+
+The container should print the installed `rtop` version. To test a different
+installer endpoint, override `INSTALL_URL` during the build:
+
+```bash
+docker build -f Dockerfile.install-test \
+  --build-arg INSTALL_URL=https://example.com/install.sh \
+  -t rtop-install-test .
+```
+
 ## Build and run
 
 ```bash

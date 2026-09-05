@@ -1,3 +1,102 @@
+# name: Release
+
+# on:
+#   push:
+#     tags:
+#       - 'v*.*.*'
+
+# permissions:
+#   contents: write
+
+# jobs:
+#   build:
+#     name: Build ${{ matrix.target }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+#           - target: x86_64-unknown-linux-gnu
+#             runner: ubuntu-latest
+#             archive: rtop-linux-x86_64.tar.gz
+#             cross: false
+#           - target: aarch64-unknown-linux-gnu
+#             runner: ubuntu-latest
+#             archive: rtop-linux-aarch64.tar.gz
+#             cross: true
+#           - target: x86_64-apple-darwin
+#             runner: macos-13
+#             archive: rtop-macos-x86_64.tar.gz
+#             cross: false
+#           - target: aarch64-apple-darwin
+#             runner: macos-14
+#             archive: rtop-macos-aarch64.tar.gz
+#             cross: false
+#           - target: x86_64-pc-windows-msvc
+#             runner: windows-latest
+#             archive: rtop-windows-x86_64.zip
+#             cross: false
+
+#     runs-on: ${{ matrix.runner }}
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Install Rust target
+#         if: ${{ !matrix.cross }}
+#         run: rustup target add ${{ matrix.target }}
+#       - name: Install cross
+#         if: ${{ matrix.cross }}
+#         uses: taiki-e/install-action@v2
+#         with:
+#           tool: cross
+#       - name: Build release binary
+#         shell: bash
+#         run: |
+#           if [ "${{ matrix.cross }}" = true ]; then
+#             cross build --locked --release --target "${{ matrix.target }}"
+#           else
+#             cargo build --locked --release --target "${{ matrix.target }}"
+#           fi
+#       - name: Package Unix release
+#         if: runner.os != 'Windows'
+#         shell: bash
+#         run: |
+#           mkdir package
+#           cp "target/${{ matrix.target }}/release/rtop" package/rtop
+#           tar -czf "${{ matrix.archive }}" -C package rtop
+#       - name: Package Windows release
+#         if: runner.os == 'Windows'
+#         shell: bash
+#         run: |
+#           mkdir package
+#           cp "target/${{ matrix.target }}/release/rtop.exe" package/rtop.exe
+#           7z a "${{ matrix.archive }}" ./package/rtop.exe
+#       - uses: actions/upload-artifact@v4
+#         with:
+#           name: ${{ matrix.archive }}
+#           path: ${{ matrix.archive }}
+#           if-no-files-found: error
+
+#   release:
+#     name: Publish GitHub Release
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/download-artifact@v4
+#         with:
+#           path: dist
+#           merge-multiple: true
+#       - name: Generate SHA256 checksums
+#         working-directory: dist
+#         run: sha256sum rtop-* > checksums.txt
+#       - name: Create release and upload assets
+#         uses: softprops/action-gh-release@v2
+#         with:
+#           generate_release_notes: true
+#           files: |
+#             dist/rtop-*
+#             dist/checksums.txt
+#
+#
+
 name: Release
 
 on:
@@ -19,34 +118,28 @@ jobs:
             runner: ubuntu-latest
             archive: rtop-linux-x86_64.tar.gz
             cross: false
+
           - target: aarch64-unknown-linux-gnu
             runner: ubuntu-latest
             archive: rtop-linux-aarch64.tar.gz
             cross: true
-          - target: x86_64-apple-darwin
-            runner: macos-13
-            archive: rtop-macos-x86_64.tar.gz
-            cross: false
-          - target: aarch64-apple-darwin
-            runner: macos-14
-            archive: rtop-macos-aarch64.tar.gz
-            cross: false
-          - target: x86_64-pc-windows-msvc
-            runner: windows-latest
-            archive: rtop-windows-x86_64.zip
-            cross: false
 
     runs-on: ${{ matrix.runner }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install Rust target
         if: ${{ !matrix.cross }}
         run: rustup target add ${{ matrix.target }}
+
       - name: Install cross
         if: ${{ matrix.cross }}
         uses: taiki-e/install-action@v2
         with:
           tool: cross
+
       - name: Build release binary
         shell: bash
         run: |
@@ -55,21 +148,16 @@ jobs:
           else
             cargo build --locked --release --target "${{ matrix.target }}"
           fi
-      - name: Package Unix release
-        if: runner.os != 'Windows'
+
+      - name: Package release
         shell: bash
         run: |
-          mkdir package
+          mkdir -p package
           cp "target/${{ matrix.target }}/release/rtop" package/rtop
           tar -czf "${{ matrix.archive }}" -C package rtop
-      - name: Package Windows release
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          mkdir package
-          cp "target/${{ matrix.target }}/release/rtop.exe" package/rtop.exe
-          7z a "${{ matrix.archive }}" ./package/rtop.exe
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.archive }}
           path: ${{ matrix.archive }}
@@ -79,15 +167,19 @@ jobs:
     name: Publish GitHub Release
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
+
       - name: Generate SHA256 checksums
         working-directory: dist
         run: sha256sum rtop-* > checksums.txt
-      - name: Create release and upload assets
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
