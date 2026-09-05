@@ -56,8 +56,34 @@ clean, modular architecture with [ratatui], [crossterm] and [sysinfo].
 
 ## Installation
 
-`rtop` is currently built from source. Clone the repository, then install the
-optimized binary with Cargo:
+### Quick Install
+
+Download and install the latest verified GitHub Release into `~/.local/bin`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/install.sh | sh
+```
+
+The installer detects the operating system and architecture, verifies the
+release archive with SHA256, and does not require `sudo`. If `~/.local/bin`
+is not in `PATH`, it prints the export command to add.
+
+### Manual Installation
+
+Open the [GitHub Releases](https://github.com/Mohammed-Bahr/rtop/releases)
+page, download the archive matching your platform and architecture, and
+verify it against `checksums.txt` before extracting `rtop` (or `rtop.exe` on
+Windows) into a directory on your `PATH`.
+
+To remove an installation made by the script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/uninstall.sh | sh
+```
+
+### Build From Source
+
+Clone the repository, then install the optimized binary with Cargo:
 
 ```bash
 cargo install --path .
@@ -65,6 +91,13 @@ cargo install --path .
 
 This places `rtop` in Cargo's binary directory. If that directory is not on
 your `PATH`, run the binary directly from `target/release/rtop` after building.
+
+### Supported Platforms
+
+Official release archives are built for Linux x86_64, Linux aarch64, macOS
+x86_64, macOS arm64, and Windows x86_64. The application is Linux-first:
+Linux provides disk I/O metrics and process signals; those features are
+unavailable on macOS and Windows.
 
 ## Build and run
 
