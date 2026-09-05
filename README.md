@@ -8,7 +8,7 @@ clean, modular architecture with [ratatui], [crossterm] and [sysinfo].
 [crossterm]: https://github.com/crossterm-rs/crossterm
 [sysinfo]: https://github.com/GuillaumeGomez/sysinfo
 
-![[Attachments/1.png]]
+![showcase](Attachments/1.png)
 
 ## Features
 
