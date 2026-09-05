@@ -70,7 +70,7 @@ To remove an installation made by the script:
 curl -fsSL https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/uninstall.sh | sh
 ```
 
-### Windows PowerShell
+### Windows PowerShell (Sorry but not Working yet i still working on it)
 
 In PowerShell, install the latest Windows x86_64 release into
 `$HOME\.local\bin` with:
