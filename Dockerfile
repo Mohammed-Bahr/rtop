@@ -1,16 +1,23 @@
+# Build the current checkout so the image always contains this project's code.
+FROM rust:1.85-bookworm AS builder
+
+WORKDIR /src
+
+# Keep dependency compilation cacheable when only application sources change.
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src \
+    && printf 'fn main() {}\n' > src/main.rs \
+    && cargo build --locked --release \
+    && rm -rf src
+
+COPY src ./src
+RUN cargo build --locked --release
+
+# The runtime image only needs the compiled executable and libc.
 FROM debian:bookworm-slim
 
-ARG INSTALL_URL=https://raw.githubusercontent.com/Mohammed-Bahr/rtop/main/install.sh
+COPY --from=builder /src/target/release/rtop /usr/local/bin/rtop
 
-ENV PATH="/root/.local/bin:${PATH}"
+ENV TERM=xterm-256color
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends --yes \
-        ca-certificates \
-        curl \
-        tar \
-        unzip \
-    && rm -rf /var/lib/apt/lists/* \
-    && curl -fsSL "$INSTALL_URL" | sh
-
-CMD ["rtop", "--version"]
+ENTRYPOINT ["rtop"]
